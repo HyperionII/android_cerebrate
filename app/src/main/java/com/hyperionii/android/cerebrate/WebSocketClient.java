@@ -2,6 +2,7 @@ package com.hyperionii.android.cerebrate;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.neovisionaries.ws.client.WebSocket;
@@ -27,10 +28,10 @@ public class WebSocketClient extends AsyncTask<Void, String, Object>{
     // Timeout value for socket connection.
     private static final int TIMEOUT = 5000;
     // Print server's text.
-    private TextView chat;
+    private ArrayAdapter<String> messages;
 
-    public WebSocketClient(TextView chat) {
-        this.chat = chat;
+    public WebSocketClient(ArrayAdapter<String> messages) {
+        this.messages = messages;
     }
 
     @Override
@@ -79,7 +80,7 @@ public class WebSocketClient extends AsyncTask<Void, String, Object>{
     @Override
     protected void onProgressUpdate(String... values) {
         if (values.length > 0) {
-            chat.setText(values[0].toString());
+            this.messages.add(values[0].toString());
         }
     }
 

@@ -9,13 +9,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-import com.neovisionaries.ws.client.*;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 
-import org.w3c.dom.Text;
-
-import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,8 +36,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        TextView chat = (TextView)findViewById(R.id.helloWorld);
-        ws = new WebSocketClient(chat);
+        ArrayList<String> list = new ArrayList<String>();
+        ArrayAdapter arrayAdapter = new ArrayAdapter<String>(this, R.layout.content_main, R.id.text, list);
+
+        ListView messageList = (ListView)findViewById(R.id.messagesList);
+        messageList.setAdapter(arrayAdapter);
+
+        ws = new WebSocketClient(arrayAdapter);
         ws.execute();
     }
 
