@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ArrayList<String> list = new ArrayList<String>();
-        ArrayAdapter arrayAdapter = new ArrayAdapter<String>(this, R.layout.content_main, R.id.text, list);
+        ArrayAdapter arrayAdapter = new ArrayAdapter<String>(this, R.layout.message_layout, list);
 
         ListView messageList = (ListView)findViewById(R.id.messagesList);
         messageList.setAdapter(arrayAdapter);
