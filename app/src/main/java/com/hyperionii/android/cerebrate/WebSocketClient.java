@@ -1,6 +1,13 @@
 package com.hyperionii.android.cerebrate;
 
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -29,8 +36,11 @@ public class WebSocketClient extends AsyncTask<Void, String, Object>{
     private static final int TIMEOUT = 5000;
     // Print server's text.
     private ArrayAdapter<String> messages;
+    // Activity attached to
+    private Activity activity;
 
-    public WebSocketClient(ArrayAdapter<String> messages) {
+    public WebSocketClient(Activity activity, ArrayAdapter<String> messages) {
+        this.activity = activity;
         this.messages = messages;
     }
 
@@ -80,7 +90,24 @@ public class WebSocketClient extends AsyncTask<Void, String, Object>{
     @Override
     protected void onProgressUpdate(String... values) {
         if (values.length > 0) {
-            this.messages.add(values[0].toString());
+            String message = values[0];
+            this.messages.add(message);
+
+            Context context = activity.getApplicationContext();
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            Notification notification = new NotificationCompat.Builder(context)
+                    .setContentTitle("Nueva Jugada!")
+                    .setContentText(message)
+                    .setContentIntent(pendingIntent)
+                    .setSmallIcon(android.R.drawable.stat_notify_chat)
+                    .setDefaults(Notification.DEFAULT_LIGHTS)
+            .build();
+            notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
+
+            ((NotificationManager)activity.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0, notification);
         }
     }
 

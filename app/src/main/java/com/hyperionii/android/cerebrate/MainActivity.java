@@ -1,5 +1,10 @@
 package com.hyperionii.android.cerebrate;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,8 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("onCreate", "Loading...");
         super.onCreate(savedInstanceState);
+        Log.i("onCreate", "Loading...");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -42,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         ListView messageList = (ListView)findViewById(R.id.messagesList);
         messageList.setAdapter(arrayAdapter);
 
-        ws = new WebSocketClient(arrayAdapter);
+        ws = new WebSocketClient(this, arrayAdapter);
         ws.execute();
     }
 
