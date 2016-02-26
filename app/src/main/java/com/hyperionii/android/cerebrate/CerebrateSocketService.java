@@ -1,11 +1,14 @@
 package com.hyperionii.android.cerebrate;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.*;
-import android.os.Process;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 import android.os.PowerManager;
@@ -13,36 +16,70 @@ import android.os.PowerManager.WakeLock;
 
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketExtension;
-import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
 public class CerebrateSocketService extends Service {
-    private Looper mServiceLooper;
-    private ServiceHandler mServiceHandler;
+    private WebSocketClient wsClient;
     private final IBinder mBinder = new Binder();
-    private WebSocket ws;
-
-    private static final int TIMEOUT = 5000;
-    public static final String SERVER_URL = "10.0.0.2:2222";
+    private Handler mHandler;
+    private IMessageListener messageListener;
     public static final String ACTION_START_SERVICE = "hyperionii.android.cerebrate.ACTION_START_SERVICE";
 
-
-    private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
-            super(looper);
+    private WebSocketAdapter socketAdapter = new WebSocketAdapter() {
+        @Override
+        public void onPingFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+            Log.i("onPingFrame", "ping frame received!");
         }
 
         @Override
-        public void handleMessage(Message msg) {
-            Log.i("ServiceHandler", msg.toString());
+        public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+            Log.i("onPongFrame", "pong frame received!");
         }
-    }
+
+        @Override
+        public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+            Log.i("onDisconnected", "Connection lost!");
+        }
+
+        @Override
+        public void onTextMessage(WebSocket webSocket, final String message) {
+            Log.i("onTextMessage", message);
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (messageListener != null) {
+                        messageListener.onMessage(message);
+                    } else {
+                        createNotification(message);
+                    }
+                }
+            });
+        }
+    };
 
     public class Binder extends android.os.Binder {
         CerebrateSocketService getService() {
             return CerebrateSocketService.this;
         }
+    }
+
+    public void createNotification(String message) {
+        Log.i("CerebrateSocketService", "Sending notification....");
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        Notification notification = new NotificationCompat.Builder(this)
+                .setContentTitle("Overmind Message")
+                .setContentText(message)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(android.R.drawable.stat_notify_chat)
+                .setDefaults(Notification.DEFAULT_LIGHTS)
+                .build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
+
+        ((NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0, notification);
     }
 
     public static Intent startServiceIntent(Context context) {
@@ -52,61 +89,16 @@ public class CerebrateSocketService extends Service {
         return i;
     }
 
-    private void initWebSocket() {
-        try {
-            Log.i("WebSocketClient", "Connecting to server...");
-
-            ws = new WebSocketFactory()
-                    .setConnectionTimeout(TIMEOUT)
-                    .createSocket(SERVER_URL)
-                    .addListener(new WebSocketAdapter() {
-
-                        @Override
-                        public void onPingFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-                            Log.i("onPingFrame", "ping frame received!");
-                        }
-
-                        @Override
-                        public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-                            Log.i("onPongFrame", "pong frame received!");
-                        }
-
-                        @Override
-                        public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
-                            Log.i("onDisconnected", "Connection lost!");
-                        }
-
-                        @Override
-                        public void onTextMessage(WebSocket webSocket, String message) {
-                            Log.i("onTextMessage", message);
-                        }
-                    })
-                    .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE)
-                    .connect();
-
-            Log.i("WebSocketClient", "Done!");
-            Log.i("WebSocketClient", "Awaiting for messages...");
-        } catch(Exception ex) {
-            String message = ex.getMessage();
-
-            if (message == null) {
-                message = "Unhandled exception!";
-            }
-
-            Log.e("WebSocketClient", message);
-        }
+    public void setMessageListener(IMessageListener messageListener){
+        this.messageListener = messageListener;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+
         Log.i("CerebrateSocketService", "onCreate()");
-
-        HandlerThread thread = new HandlerThread("ClientSocketServiceThread", Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-
-        mServiceLooper = thread.getLooper();
-        mServiceHandler = new ServiceHandler(mServiceLooper);
+        this.mHandler = new Handler();
     }
 
     @Override
@@ -120,10 +112,12 @@ public class CerebrateSocketService extends Service {
         WakeLock wakeLock = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Cerebrate Service");
         wakeLock.acquire();
 
-        // mShutDown = false;
+        if (wsClient == null) {
+            wsClient = new WebSocketClient();
+        }
 
-        if (ws == null) {
-            this.initWebSocket();
+        if (!wsClient.isConnected()) {
+            wsClient.connect(this.socketAdapter);
         }
 
         wakeLock.release();
@@ -140,6 +134,14 @@ public class CerebrateSocketService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
+        if (this.wsClient != null) {
+            this.wsClient.disconnect();
+        }
+
         Toast.makeText(this, "Service stopping...", Toast.LENGTH_SHORT).show();
+    }
+
+    public interface IMessageListener {
+        void onMessage(String message);
     }
 }
