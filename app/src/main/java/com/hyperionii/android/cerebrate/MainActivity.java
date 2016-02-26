@@ -51,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
         ws = new WebSocketClient(this, arrayAdapter);
         ws.execute();
+
+
+        this.startService(null);
     }
 
     @Override
