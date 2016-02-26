@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
         ws = new WebSocketClient(this, arrayAdapter);
         ws.execute();
 
-        Intent startServiceIntent = ClientSocketService.startServiceIntent(this.getApplicationContext());
-        this.startService(startServiceIntent);
+        /*Intent startServiceIntent = CerebrateSocketService.startServiceIntent(this.getApplicationContext());
+        this.startService(startServiceIntent);*/
     }
 
     @Override

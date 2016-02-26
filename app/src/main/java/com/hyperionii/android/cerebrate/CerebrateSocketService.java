@@ -17,7 +17,7 @@ import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
-public class ClientSocketService extends Service {
+public class CerebrateSocketService extends Service {
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     private final IBinder mBinder = new Binder();
@@ -40,13 +40,13 @@ public class ClientSocketService extends Service {
     }
 
     public class Binder extends android.os.Binder {
-        ClientSocketService getService() {
-            return ClientSocketService.this;
+        CerebrateSocketService getService() {
+            return CerebrateSocketService.this;
         }
     }
 
     public static Intent startServiceIntent(Context context) {
-        Intent i = new Intent(context, ClientSocketService.class);
+        Intent i = new Intent(context, CerebrateSocketService.class);
         i.setAction(ACTION_START_SERVICE);
 
         return i;
@@ -100,7 +100,7 @@ public class ClientSocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i("ClientSocketService", "onCreate()");
+        Log.i("CerebrateSocketService", "onCreate()");
 
         HandlerThread thread = new HandlerThread("ClientSocketServiceThread", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
@@ -114,7 +114,7 @@ public class ClientSocketService extends Service {
         Toast.makeText(this, "Service starting...", Toast.LENGTH_SHORT).show();
 
         if (intent != null) {
-            Log.i("ClientSocketService", intent.toUri(0));
+            Log.i("CerebrateSocketService", intent.toUri(0));
         }
 
         WakeLock wakeLock = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Cerebrate Service");
