@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements CerebrateSocketSe
         ArrayList<String> list = new ArrayList<String>();
         this.messages = new ArrayAdapter<>(this, R.layout.message_layout, list);
 
+
         ListView lvMessages = (ListView)findViewById(R.id.messagesList);
         lvMessages.setAdapter(this.messages);
 
