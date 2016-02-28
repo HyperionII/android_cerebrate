@@ -125,7 +125,7 @@ public class CerebrateSocketService extends Service {
     }
 
     public synchronized void sendMessageToServer(String message){
-        
+        this.wsClient.sendMessage(message);
     }
 
     public ArrayList<String> getMessages() {
