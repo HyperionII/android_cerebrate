@@ -74,6 +74,8 @@ public class CerebrateSocketService extends Service {
         public void onTextMessage(WebSocket webSocket, final String message) {
             Log.i("onTextMessage", message);
 
+            messages.add(message);
+
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
