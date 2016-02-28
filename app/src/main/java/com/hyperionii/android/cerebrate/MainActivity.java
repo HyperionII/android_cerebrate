@@ -34,11 +34,8 @@ public class MainActivity extends AppCompatActivity implements CerebrateSocketSe
         public void onServiceConnected(ComponentName name, IBinder service) {
             cerebrateSocketService = ((CerebrateSocketService.Binder)service).getService();
 
-            ArrayList<String> savedMessageList = cerebrateSocketService.getMessages();
-            messages = new ArrayAdapter<>(MainActivity.this, R.layout.message_layout, savedMessageList);
-
-            ListView lvMessages = (ListView)findViewById(R.id.messagesList);
-            lvMessages.setAdapter(messages);
+            ArrayList<String> savedMessages = cerebrateSocketService.getMessages();
+            MainActivity.this.messages.addAll(savedMessages);
 
             cerebrateSocketService.setMessageListener(MainActivity.this);
         }
@@ -70,6 +67,12 @@ public class MainActivity extends AppCompatActivity implements CerebrateSocketSe
 
         Intent startServiceIntent = CerebrateSocketService.startServiceIntent(this.getApplicationContext());
         this.startService(startServiceIntent);
+
+        ArrayList<String> list = new ArrayList<>();
+        this.messages = new ArrayAdapter<>(this, R.layout.message_layout, list);
+
+        ListView lvMessages = (ListView)findViewById(R.id.messagesList);
+        lvMessages.setAdapter(messages);
     }
 
     @Override
