@@ -62,7 +62,6 @@ public class CerebrateSocketService extends Service {
                                 Log.i("WebSocketAdapter", message);
                             }
                         }
-
                     }
                 }
             }).start();
