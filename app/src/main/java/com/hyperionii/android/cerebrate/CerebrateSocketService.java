@@ -124,6 +124,10 @@ public class CerebrateSocketService extends Service {
         this.messageListener = messageListener;
     }
 
+    public ArrayList<String> getMessages() {
+        return this.messages;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
