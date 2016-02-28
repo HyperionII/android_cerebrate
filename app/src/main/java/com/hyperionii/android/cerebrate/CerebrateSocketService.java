@@ -39,6 +39,14 @@ public class CerebrateSocketService extends Service {
         @Override
         public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
             Log.i("onDisconnected", "Connection lost!");
+
+            // Attempts to restore connection.
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            }).start();
         }
 
         @Override
