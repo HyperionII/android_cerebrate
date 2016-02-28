@@ -37,14 +37,31 @@ public class CerebrateSocketService extends Service {
         }
 
         @Override
-        public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+        public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, final boolean closedByServer) throws Exception {
             Log.i("onDisconnected", "Connection lost!");
 
             // Attempts to restore connection.
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    // Reconnect if is not connected.
                     while(!wsClient.isConnected()) {
+                        wsClient.reconnect();
+
+                        // Sleep for wsClient.TIMEOUT * 3 if client is trying to reconnect.
+                        while(wsClient.isConnecting()) {
+                            try {
+                                java.lang.Thread.sleep(wsClient.TIMEOUT * 3);
+                            }catch(InterruptedException ex){
+                                String message = ex.getMessage();
+
+                                if (message == null) {
+                                    message = "Undefined InterruptedException!";
+                                }
+
+                                Log.i("WebSocketAdapter", message);
+                            }
+                        }
 
                     }
                 }
