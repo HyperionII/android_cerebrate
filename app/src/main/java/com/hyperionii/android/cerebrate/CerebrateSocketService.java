@@ -47,24 +47,13 @@ public class CerebrateSocketService extends Service {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    int maxRetries = 5;
+                    int retry = 0;
+
                     // Reconnect if is not connected.
-                    while(!wsClient.isConnected()) {
+                    while(!wsClient.isConnected() && retry < maxRetries) {
                         wsClient.reconnect();
-
-                        // Sleep for wsClient.TIMEOUT * 3 if client is trying to reconnect.
-                        while(wsClient.isConnecting()) {
-                            try {
-                                java.lang.Thread.sleep(wsClient.TIMEOUT * 3);
-                            }catch(InterruptedException ex){
-                                String message = ex.getMessage();
-
-                                if (message == null) {
-                                    message = "Undefined InterruptedException!";
-                                }
-
-                                Log.i("WebSocketAdapter", message);
-                            }
-                        }
+                        retry++;
                     }
                 }
             }).start();
