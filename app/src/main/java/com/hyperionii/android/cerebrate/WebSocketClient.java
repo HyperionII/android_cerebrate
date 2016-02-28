@@ -16,7 +16,7 @@ public class WebSocketClient{
 
     private WebSocket ws;
     private Thread createConnThread;
-    public static final String SERVER = "ws://10.0.2.2:2222/ws";
+    public static final String SERVER = "ws://192.168.0.100:2222/ws";
     public static final int TIMEOUT = 5000;
 
     public boolean isConnected() {
