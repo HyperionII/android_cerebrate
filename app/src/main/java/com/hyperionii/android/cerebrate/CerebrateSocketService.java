@@ -106,7 +106,7 @@ public class CerebrateSocketService extends Service {
                 .setContentText(message)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(android.R.drawable.stat_notify_chat)
-                .setDefaults(Notification.DEFAULT_LIGHTS)
+                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                 .build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
 
