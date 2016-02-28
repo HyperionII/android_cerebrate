@@ -110,4 +110,8 @@ public class WebSocketClient{
         }
     }
 
+    public synchronized void sendMessage(String message) {
+        this.ws.sendBinary(message.getBytes());
+    }
+
 }

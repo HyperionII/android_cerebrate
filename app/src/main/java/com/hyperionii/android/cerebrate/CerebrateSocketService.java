@@ -124,6 +124,10 @@ public class CerebrateSocketService extends Service {
         this.messageListener = messageListener;
     }
 
+    public synchronized void sendMessageToServer(String message){
+        
+    }
+
     public ArrayList<String> getMessages() {
         return this.messages;
     }
