@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements CerebrateSocketSe
             cerebrateSocketService = ((CerebrateSocketService.Binder)service).getService();
 
             ArrayList<String> savedMessages = cerebrateSocketService.getMessages();
+            MainActivity.this.messages.clear();
             MainActivity.this.messages.addAll(savedMessages);
 
             cerebrateSocketService.setMessageListener(MainActivity.this);
