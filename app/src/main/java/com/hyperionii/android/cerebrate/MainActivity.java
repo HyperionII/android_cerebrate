@@ -114,6 +114,11 @@ public class MainActivity extends AppCompatActivity implements CerebrateSocketSe
             return;
         }
 
+        if (cerebrateSocketService == null) {
+            return;
+        }
+
+        this.cerebrateSocketService.sendMessageToServer(message);
         txtMessage.setText("");
     }
 }
