@@ -1,14 +1,10 @@
 package com.hyperionii.android.cerebrate;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
