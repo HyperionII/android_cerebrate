@@ -18,12 +18,15 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
+import java.util.ArrayList;
+
 public class CerebrateSocketService extends Service {
     private WebSocketClient wsClient;
     private final IBinder mBinder = new Binder();
     private Handler mHandler;
     private IMessageListener messageListener;
     public static final String ACTION_START_SERVICE = "hyperionii.android.cerebrate.ACTION_START_SERVICE";
+    public ArrayList<String> messages;
 
     private WebSocketAdapter socketAdapter = new WebSocketAdapter() {
         @Override
@@ -125,6 +128,7 @@ public class CerebrateSocketService extends Service {
 
         Log.i("CerebrateSocketService", "onCreate()");
         this.mHandler = new Handler();
+        this.messages = new ArrayList<>();
     }
 
     @Override
