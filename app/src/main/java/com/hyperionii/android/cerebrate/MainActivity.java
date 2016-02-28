@@ -11,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 
@@ -102,5 +104,16 @@ public class MainActivity extends AppCompatActivity implements CerebrateSocketSe
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void sendMessage(View view) {
+        EditText txtMessage = (EditText)findViewById(R.id.txtMessage);
+        String message = txtMessage.getText().toString();
+
+        if (message.isEmpty()) {
+            return;
+        }
+
+        txtMessage.setText("");
     }
 }
