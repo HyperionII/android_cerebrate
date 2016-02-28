@@ -16,8 +16,8 @@ public class WebSocketClient{
 
     private WebSocket ws;
     private Thread createConnThread;
-    private static final String SERVER = "ws://10.0.2.2:2222/ws";
-    private static final int TIMEOUT = 5000;
+    public static final String SERVER = "ws://10.0.2.2:2222/ws";
+    public static final int TIMEOUT = 5000;
 
     public boolean isConnected() {
         if (ws == null) {
@@ -27,6 +27,14 @@ public class WebSocketClient{
         return ws.getState() == WebSocketState.OPEN;
     }
 
+    public boolean isConnecting() {
+        if (ws == null) {
+            return false;
+        }
+
+        return ws.getState() == WebSocketState.CONNECTING;
+    }
+
     public synchronized void disconnect() {
         if (this.isConnected()) {
             this.ws.disconnect();
@@ -34,7 +42,7 @@ public class WebSocketClient{
     }
 
     public synchronized void connect(final WebSocketAdapter socketAdapter) {
-        if (this.isConnected()) {
+        if (this.isConnected() || this.isConnecting()) {
             return;
         }
 
@@ -74,6 +82,32 @@ public class WebSocketClient{
         });
 
         this.createConnThread.start();
+    }
+
+    public synchronized void reconnect() {
+        if (this.isConnected() || this.isConnecting()) {
+            return;
+        }
+
+        try {
+            this.ws = ws.recreate().connect();
+        } catch(WebSocketException ex) {
+            String message = ex.getMessage();
+
+            if (message == null) {
+                message = "WebSocketException catched!";
+            }
+
+            Log.e("WebSocketClient", message);
+        } catch (java.io.IOException ex) {
+            String message = ex.getMessage();
+
+            if (message == null) {
+                message = "Unhandled IO Exception when creating a websocket!";
+            }
+
+            Log.e("WebSocketClient", message);
+        }
     }
 
 }

@@ -44,7 +44,9 @@ public class CerebrateSocketService extends Service {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    while(!wsClient.isConnected()) {
 
+                    }
                 }
             }).start();
         }
