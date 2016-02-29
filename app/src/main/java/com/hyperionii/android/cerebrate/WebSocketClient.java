@@ -111,6 +111,10 @@ public class WebSocketClient{
     }
 
     public synchronized void sendMessage(String message) {
+        if (this.ws == null) {
+            return;
+        }
+
         this.ws.sendBinary(message.getBytes());
     }
 
