@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Android Cerebrate</string>
-    <string name="action_settings">Reconnect</string>
+    <string name="action_reconnect">Reconnect</string>
+    <string name="action_clear_chat">Clear Chat</string>
 </resources>
