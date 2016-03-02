@@ -21,6 +21,7 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import java.util.ArrayList;
 
 public class CerebrateSocketService extends Service {
+    private static final String name = "Android";
     private WebSocketClient wsClient;
     private final IBinder mBinder = new Binder();
     private Handler mHandler;
