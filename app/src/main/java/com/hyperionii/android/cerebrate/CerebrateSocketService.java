@@ -19,6 +19,8 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class CerebrateSocketService extends Service {
     private static final String name = "Android";
@@ -30,6 +32,11 @@ public class CerebrateSocketService extends Service {
     public ArrayList<String> messages;
 
     private WebSocketAdapter socketAdapter = new WebSocketAdapter() {
+        @Override
+        public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
+            String credentials = String.format("{\"name\": \"%s\"}", name);
+        }
+
         @Override
         public void onPingFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
             Log.i("onPingFrame", "ping frame received!");
