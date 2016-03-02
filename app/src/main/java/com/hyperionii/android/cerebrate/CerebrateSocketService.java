@@ -35,6 +35,7 @@ public class CerebrateSocketService extends Service {
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             String credentials = String.format("{\"name\": \"%s\"}", name);
+            websocket.sendText(credentials);
         }
 
         @Override
