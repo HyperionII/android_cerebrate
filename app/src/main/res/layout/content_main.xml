@@ -22,7 +22,7 @@
             android:touchscreenBlocksFocus="false" />
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/sendMessageCOntainer"
+        android:id="@+id/sendMessageContainer"
         android:divider="@android:color/transparent"
         android:orientation="horizontal"
         android:layout_weight="20"
