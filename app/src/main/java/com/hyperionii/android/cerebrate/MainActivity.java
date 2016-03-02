@@ -99,7 +99,9 @@ public class MainActivity extends AppCompatActivity implements CerebrateSocketSe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_reconnect) {
+            return true;
+        } else if (id == R.id.action_clear_chat) {
             return true;
         }
 
