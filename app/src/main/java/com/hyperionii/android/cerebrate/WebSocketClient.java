@@ -16,6 +16,7 @@ public class WebSocketClient{
 
     private WebSocket ws;
     private Thread createConnThread;
+    public static final String name = "Android";
     public static final String SERVER = "ws://192.168.0.100:2222/ws";
     public static final int TIMEOUT = 5000;
 
